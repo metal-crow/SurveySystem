@@ -10,14 +10,20 @@ public class UserDAO {
 	
 	public static void main(String[] args) {
 		try{
-			factory = new Configuration().configure().buildSessionFactory();
+			
+			factory = new Configuration()
+						//Add all classes here
+						.addAnnotatedClass(User.class)
+						.configure()
+						.buildSessionFactory();
 		}catch (Throwable ex) {
 			System.err.println("Failed to create sessionFactory object." + ex);
 			throw new ExceptionInInitializerError(ex); 
 		}
 		
 		UserDAO dao = new UserDAO();
-		dao.create_user();
+		dao.create_user("test@aol.com", "1d1d2m1098c1c1c1c2", "Bob","Lastname");
+		factory.close();
 	}
 	/**
 	 * This opens the database to the Users table, or creates it if it doesnt exist
@@ -31,13 +37,13 @@ public class UserDAO {
 	 * Verify email is valid
 	 * Verify non duplicate email
 	 */
-	public int create_user(){
+	public int create_user(String email, String password_hash, String first_name, String last_name){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		Integer user_id = null;
 		try{
 			tx = session.beginTransaction();
-			User user = new User("test@aol.com", "1d1d2m1098c1c1c1c2", "Bob","Lastname");
+			User user = new User(email, password_hash, first_name, last_name);
 			user_id = (Integer) session.save(user); 
 			tx.commit();
 		}catch (HibernateException e) {

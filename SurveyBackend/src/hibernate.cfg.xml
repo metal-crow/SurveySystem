@@ -12,8 +12,6 @@
    <property name="hibernate.connection.password"></property>
    
    <property name="hibernate.hbm2ddl.auto">update</property>
-   <!-- List of XML mapping files -->
-   <mapping resource="User.hbm.xml"/>
 
-</session-factory>
+	</session-factory>
 </hibernate-configuration>

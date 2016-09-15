@@ -31,36 +31,34 @@ public class User {
 		this.last_name = last_name;
 	}
 	
-	@Id
-	public int get_id() {
+	public int getid() {
 		return id;
 	}
-	@Id
-	public void set_id(int id) {
+	public void setid(int id) {
 		this.id = id;
 	}
-	public String get_email() {
+	public String getemail() {
 		return email;
 	}
-	public void set_email(String email) {
+	public void setemail(String email) {
 		this.email = email;
 	}
-	public String get_password_hash() {
+	public String getpassword_hash() {
 		return password_hash;
 	}
-	public void set_password_hash(String password_hash) {
+	public void setpassword_hash(String password_hash) {
 		this.password_hash = password_hash;
 	}
-	public String get_first_name() {
+	public String getfirst_name() {
 		return first_name;
 	}
-	public void set_first_name(String first_name) {
+	public void setfirst_name(String first_name) {
 		this.first_name = first_name;
 	}
-	public String get_last_name() {
+	public String getlast_name() {
 		return last_name;
 	}
-	public void set_last_name(String last_name) {
+	public void setlast_name(String last_name) {
 		this.last_name = last_name;
 	}
 }
