@@ -1,12 +1,10 @@
 import javax.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "USER")
 public class User {
     @Id 
-    @GenericGenerator(name="generator", strategy="increment")
-    @GeneratedValue(generator="generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable=false)
 	private int id;
     

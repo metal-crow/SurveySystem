@@ -4,11 +4,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import static spark.Spark.*;
+
 public class UserDAO {
 	
 	private static SessionFactory factory;
 	
 	public static void main(String[] args) {
+		get("/hello", (request, response) -> "Hello World!");
+		
 		try{
 			
 			factory = new Configuration()
