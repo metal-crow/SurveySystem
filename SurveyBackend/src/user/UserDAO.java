@@ -1,39 +1,16 @@
+package user;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-
-import static spark.Spark.*;
 
 public class UserDAO {
 	
 	private static SessionFactory factory;
 	
-	public static void main(String[] args) {
-		get("/hello", (request, response) -> "Hello World!");
-		
-		try{
-			
-			factory = new Configuration()
-						//Add all classes here
-						.addAnnotatedClass(User.class)
-						.configure()
-						.buildSessionFactory();
-		}catch (Throwable ex) {
-			System.err.println("Failed to create sessionFactory object." + ex);
-			throw new ExceptionInInitializerError(ex); 
-		}
-		
-		UserDAO dao = new UserDAO();
-		dao.create_user("test@aol.com", "1d1d2m1098c1c1c1c2", "Bob","Lastname");
-		factory.close();
-	}
-	/**
-	 * This opens the database to the Users table, or creates it if it doesnt exist
-	 */
-	public static void open_db_connection(){
-		
+
+	public UserDAO(SessionFactory factory) {
+		UserDAO.factory=factory;
 	}
 	
 	/**
@@ -63,8 +40,8 @@ public class UserDAO {
 	 * API Request (currently double for login and verify user logged in). Fix in future.
 	 * given passed user email and hash, return if this is accurate
 	 */
-	public void verify_user(){
-		
+	public boolean verify_user(int id, String password_hash){
+		return true;
 	}
 	
 }
