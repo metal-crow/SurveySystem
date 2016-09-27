@@ -11,18 +11,15 @@ import javax.persistence.Table;
 
 import user.User;
 
-/**The different types of responses allowed for a survey*/
-enum User_Response_Type{
-	Informal,//no user login required, anyone can response and respond more than 1 time
-	Anonymous,//user login required and checked, but user id hashed on submission
-	User//full user id saved
-}
-
 @Entity
 @Table(name = "SURVEYS")
 public class Survey {
-	
-	public static final int MAX_QUESTIONS = 30;//the maximum possible questions a survey can have
+	/**The different types of responses allowed for a survey*/
+	public enum User_Response_Type{
+		Informal,//no user login required, anyone can response and respond more than 1 time
+		Anonymous,//user login required and checked, but user id hashed on submission
+		User//full user id saved
+	}
 	
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)//auto increment
@@ -33,13 +30,13 @@ public class Survey {
 	private String survey_name;
 
     @Column(name = "user_response_type", nullable = false)
-    private User_Response_Type user_response_type;
+    private User_Response_Type user_response_type;//enum of how the user response is recorded
     
     @Column(name = "closing", nullable = false)
-    private Date closing;
+    private Date closing;//date and time survey closes
 
     @Column(name = "deleting", nullable = false)
-    private Date deleting;
+    private Date deleting;//date and time survey is deleted
     
     @Column(name = "managing_user_id")
     private int managing_user_id;

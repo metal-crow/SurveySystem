@@ -7,16 +7,13 @@ import org.hibernate.Transaction;
 public class UserDAO {
 	
 	private static SessionFactory factory;
-	
 
 	public UserDAO(SessionFactory factory) {
 		UserDAO.factory=factory;
 	}
 	
 	/**
-	 * API request
-	 * Verify email is valid
-	 * Verify non duplicate email
+	 * API request to create user
 	 */
 	public int create_user(String email, String password_hash, String first_name, String last_name){
 		Session session = factory.openSession();
