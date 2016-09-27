@@ -2,10 +2,10 @@ package user;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "USERS")
 public class User {
     @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)//auto increment
     @Column(name = "id", nullable=false)
 	private int id;
     
@@ -21,8 +21,6 @@ public class User {
     @Column(name = "last_name")
 	private String last_name;
 	
-	
-	public User() {}
 	public User(String email, String password_hash, String first_name, String last_name) {
 		this.email = email;
 		this.password_hash = password_hash;
