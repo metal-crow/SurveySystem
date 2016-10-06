@@ -1,8 +1,7 @@
 package user;
 import javax.persistence.*;
 
-@Entity
-@Table(name = "USERS")
+@Entity(name = "USERS")
 public class User {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)//auto increment
@@ -20,7 +19,9 @@ public class User {
     
     @Column(name = "last_name")
 	private String last_name;
-	
+    
+    public User(){}
+    
 	public User(String email, String password_hash, String first_name, String last_name) {
 		this.email = email;
 		this.password_hash = password_hash;

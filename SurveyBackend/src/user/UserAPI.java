@@ -1,7 +1,9 @@
 package user;
 
-import static spark.Spark.*;
+import static spark.Spark.post;
+
 import java.net.HttpURLConnection;
+
 import org.hibernate.SessionFactory;
 
 public class UserAPI {
@@ -23,7 +25,6 @@ public class UserAPI {
 				String last_name = request.queryParams("last_name");
 				
 				int id = user_dao.create_user(email, password_hash, first_name, last_name);
-				//user_dao.create_user("test@aol.com", "1d1d2m1098c1c1c1c2", "Bob","Lastname");
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
 				return id;
