@@ -32,8 +32,7 @@ class ResponsePK implements Serializable{
 
 @Entity(name = "RESPONSES")
 @Table(name = "RESPONSES", indexes = {
-        @Index(columnList = "respondant", name = "respondant_hidx"),
-        @Index(columnList = "survey", name = "survey_hidx")
+        @Index(columnList = "respondant", name = "respondant_hidx")
 	   })
 @IdClass(ResponsePK.class)
 public class Response {
@@ -46,18 +45,15 @@ public class Response {
     private int respondant_id;//if informal response, this is incremented for each new user response to survey.
 
 	@Id
-    @Column(nullable = false)
 	@ManyToOne(targetEntity=Survey.class)
     private Survey survey;//survey being responded to. An index.
         
 	@ManyToOne(targetEntity=Question.class)
-	@Column(nullable=false)
     private Question response_to;//the question this is an answer to
 
     @Column(name = "answer", nullable = false)
     private String answer;
     
-    //TODO
     public Response(int respondant, Survey survey, int respondant_id, Question response_to, String answer) {
 		this.respondant = respondant;
 		this.survey = survey;

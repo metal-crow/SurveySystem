@@ -43,6 +43,8 @@ public class Survey {
     @ManyToOne(targetEntity=User.class)
     private User managing_user;
         
+    public Survey(){}
+    
     public Survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user) {
     	this.survey_name = name;
     	this.user_response_type = user_response_type;

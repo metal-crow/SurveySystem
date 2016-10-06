@@ -26,6 +26,7 @@ public class UserDAO {
 		
 		int id = create_user(email, pass_hash, first, last);
 		System.out.println(id);
+		assert id>-1;
 		
 		boolean result = verify_user(id, "!");
 		assert result:false;
@@ -39,7 +40,7 @@ public class UserDAO {
 		assert user.getpassword_hash().equals(pass_hash);
 		assert user .getlast_name().equals(last);
 		
-		delete_user(id);
+		assert delete_user(id);
 	}
 	
 	/**

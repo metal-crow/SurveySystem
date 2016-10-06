@@ -20,9 +20,19 @@ public class SurveyDAO {
 	}
 	
 	public void testDAO(){
-		int id = create_survey("test_survey", Survey.User_Response_Type.User, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), null);
+		int id = create_survey("test_survey", User_Response_Type.User, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), null);
 		System.out.println(id);
+		assert id>-1;
 		
+		Survey survey = get_survey(id);
+		assert survey.getSurvey_name().equals("test_survey");
+		assert survey.getUser_response_type()==User_Response_Type.User;
+		
+		int old_count=survey.getRespondant_id_count();
+		assert got_informal_response(survey);
+		assert old_count==survey.getRespondant_id_count();
+		
+		assert delete_survey(id);
 	}
 
 	/**

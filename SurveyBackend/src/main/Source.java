@@ -7,6 +7,7 @@ import org.hibernate.cfg.Configuration;
 import question.Question;
 import response.Response;
 import survey.Survey;
+import survey.SurveyDAO;
 import user.User;
 import user.UserAPI;
 import user.UserDAO;
@@ -34,6 +35,7 @@ public class Source {
 
 		//run tests here
 		new UserDAO(factory).testDAO();
+		new SurveyDAO(factory).testDAO();
 		
 		//start the APIs here, Spark will auto traverse them and start the endpoints
 		new UserAPI(factory);
