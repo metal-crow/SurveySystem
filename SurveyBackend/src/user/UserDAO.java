@@ -76,7 +76,7 @@ public class UserDAO {
 			@SuppressWarnings("rawtypes")
 			Query query = session.createQuery("delete USERS where id = :id");
 			query.setParameter("id", id);
-			result = query.executeUpdate()==1;
+			result = (query.executeUpdate()==1);
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
@@ -103,7 +103,7 @@ public class UserDAO {
 			Query<Integer> query = session.createQuery("select id from USERS where id = :id and password_hash = :password_hash");
 			query.setParameter("id", id);
 			query.setParameter("password_hash", password_hash);
-			password_match = 1==query.getMaxResults();
+			password_match = (1==query.getMaxResults());
 			
 			tx.commit();
 		}catch (HibernateException e) {

@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import survey.Survey.User_Response_Type;
 import user.User;
@@ -16,6 +17,12 @@ public class SurveyDAO {
 	
 	public SurveyDAO(SessionFactory factory) {
 		SurveyDAO.factory=factory;
+	}
+	
+	public void testDAO(){
+		int id = create_survey("test_survey", Survey.User_Response_Type.User, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), null);
+		System.out.println(id);
+		
 	}
 
 	/**
@@ -38,5 +45,93 @@ public class SurveyDAO {
 			session.close(); 
 		}
 		return survey_id;
+	}
+	
+	/**
+	 * Delete the given survey
+	 * @param id
+	 * @return
+	 */
+	public boolean delete_survey(int id){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		boolean result = false;
+		try{
+			tx = session.beginTransaction();
+			@SuppressWarnings("rawtypes")
+			Query query = session.createQuery("delete SURVEYS where id = :id");
+			query.setParameter("id", id);
+			result = (query.executeUpdate()==1);
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+		return result;
+	}
+	
+	/**
+	 * Increment the count for the number of informal users who've responded
+	 * No effect if this is not a formal survey
+	 * @param survey
+	 * @return true on success, and the passed survey is altered
+	 */
+	public boolean got_informal_response(Survey survey){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		boolean result = true;
+		
+		if(survey.getUser_response_type() == Survey.User_Response_Type.Informal){
+			try{
+				tx = session.beginTransaction();
+				
+				//increment count
+				@SuppressWarnings("rawtypes")
+				Query update_query = session.createQuery("update SURVEYS SET respondant_id_count = :count + 1 WHERE id = :id");
+				update_query.setParameter("id", survey.getId());
+				update_query.setParameter("count", survey.getRespondant_id_count());
+				result = (update_query.executeUpdate()==1);
+				//save update to object
+				if(result){
+					survey.setRespondant_id_count(survey.getRespondant_id_count()+1);
+				}
+				
+				tx.commit();
+			}catch (HibernateException e) {
+				if (tx!=null) tx.rollback();
+				e.printStackTrace(); 
+				result = false;
+			}finally {
+				session.close(); 
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Get survey by id
+	 * @param id
+	 * @return
+	 */
+	public Survey get_survey(int id){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		Survey survey=null;
+		try{
+			tx = session.beginTransaction();
+			
+			survey = (Survey) session.get(Survey.class, id);
+			
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+		return survey;
 	}
 }

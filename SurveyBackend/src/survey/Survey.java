@@ -7,12 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 
 import user.User;
 
-@Entity
-@Table(name = "SURVEYS")
+@Entity(name = "SURVEYS")
 public class Survey {
 	/**The different types of responses allowed for a survey*/
 	public enum User_Response_Type{
@@ -32,21 +31,40 @@ public class Survey {
     @Column(name = "user_response_type", nullable = false)
     private User_Response_Type user_response_type;//enum of how the user response is recorded
     
+    @Column(name = "respondant_id_count", nullable = true)
+    private int respondant_id_count = 0;//count for the number of users responded, if informal response used
+    
     @Column(name = "closing", nullable = false)
     private Date closing;//date and time survey closes
 
     @Column(name = "deleting", nullable = false)
     private Date deleting;//date and time survey is deleted
     
-    @Column(name = "managing_user_id")
-    private int managing_user_id;
+    @ManyToOne(targetEntity=User.class)
+    private User managing_user;
         
     public Survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user) {
     	this.survey_name = name;
     	this.user_response_type = user_response_type;
     	this.closing = closing;
     	this.deleting = deleting;
-    	this.managing_user_id = managing_user.getid();
+    	this.managing_user = managing_user;
+	}
+
+	public int getRespondant_id_count() {
+		return respondant_id_count;
+	}
+
+	public void setRespondant_id_count(int respondant_id_count) {
+		this.respondant_id_count = respondant_id_count;
+	}
+
+	public User getManaging_user() {
+		return managing_user;
+	}
+
+	public void setManaging_user(User managing_user) {
+		this.managing_user = managing_user;
 	}
 
 	public int getId() {
@@ -87,13 +105,5 @@ public class Survey {
 
 	public void setDeleting(Date deleting) {
 		this.deleting = deleting;
-	}
-
-	public int getManaging_user_id() {
-		return managing_user_id;
-	}
-
-	public void setManaging_user_id(int managing_user_id) {
-		this.managing_user_id = managing_user_id;
 	}
 }

@@ -5,10 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "QUESTIONS")
+@Entity(name = "QUESTIONS")
 public class Question {
 	/**
 	 * The types of responses available for a survey question.
