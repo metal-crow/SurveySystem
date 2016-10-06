@@ -54,6 +54,8 @@ public class Response {
     @Column(name = "answer", nullable = false)
     private String answer;
     
+    public Response(){}
+    
     public Response(int respondant, Survey survey, int respondant_id, Question response_to, String answer) {
 		this.respondant = respondant;
 		this.survey = survey;
