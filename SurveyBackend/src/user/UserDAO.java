@@ -18,7 +18,7 @@ public class UserDAO {
 	/**
 	 * Testing dao functions
 	 */
-	public void testDAO() {		
+	public static void testDAO() {		
 		String email = Source.random_string(7)+'@'+Source.random_string(4)+".com";
 		String pass_hash = Source.random_string(50);
 		String first = Source.random_string(7);
@@ -46,7 +46,7 @@ public class UserDAO {
 	/**
 	 * API request to create user
 	 */
-	public int create_user(String email, String password_hash, String first_name, String last_name){
+	public static int create_user(String email, String password_hash, String first_name, String last_name){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		Integer user_id = null;
@@ -68,7 +68,7 @@ public class UserDAO {
 	 * Delete given user
 	 * @param id
 	 */
-	public boolean delete_user(int id){
+	public static boolean delete_user(int id){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		boolean result = false;
@@ -93,7 +93,7 @@ public class UserDAO {
 	 * TODO Fix in future.
 	 * given passed user id and hash, return if this is accurate
 	 */
-	public boolean verify_user(int id, String password_hash){
+	public static boolean verify_user(int id, String password_hash){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		boolean password_match=false;
@@ -121,7 +121,7 @@ public class UserDAO {
 	 * @param id
 	 * @return
 	 */
-	public User get_user(int id){
+	public static User get_user(int id){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		User user=null;

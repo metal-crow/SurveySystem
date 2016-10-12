@@ -19,7 +19,7 @@ public class SurveyDAO {
 		SurveyDAO.factory=factory;
 	}
 	
-	public void testDAO(){
+	public static void testDAO(){
 		int id = create_survey("test_survey", User_Response_Type.User, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), null);
 		System.out.println(id);
 		assert id>-1;
@@ -39,7 +39,7 @@ public class SurveyDAO {
 	 * Api function for creating a survey
 	 * Returns the id of the created survey 
 	 */
-	public int create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user){
+	public static int create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		Integer survey_id = null;
@@ -58,20 +58,28 @@ public class SurveyDAO {
 	}
 	
 	/**
-	 * Delete the given survey
-	 * @param id
+	 * Delete the given survey, and all corrisponding questions and responses
+	 * @param id the survey id
 	 * @return
 	 */
-	public boolean delete_survey(int id){
+	public static boolean delete_survey(int id){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		boolean result = false;
 		try{
 			tx = session.beginTransaction();
+			//delete survey
 			@SuppressWarnings("rawtypes")
 			Query query = session.createQuery("delete SURVEYS where id = :id");
 			query.setParameter("id", id);
 			result = (query.executeUpdate()==1);
+			//delete responses
+			if(result){
+				@SuppressWarnings("rawtypes")
+				Query response_query = session.createQuery("delete RESPONSES where survey_id = :id");
+				response_query.setParameter("id", id);
+				response_query.executeUpdate();
+			}
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
@@ -88,7 +96,7 @@ public class SurveyDAO {
 	 * @param survey
 	 * @return true on success, and the passed survey is altered
 	 */
-	public boolean got_informal_response(Survey survey){
+	public static boolean got_informal_response(Survey survey){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		boolean result = true;
@@ -126,7 +134,7 @@ public class SurveyDAO {
 	 * @param id
 	 * @return
 	 */
-	public Survey get_survey(int id){
+	public static Survey get_survey(int id){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		Survey survey=null;

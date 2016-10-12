@@ -5,7 +5,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import question.Question;
+import question.QuestionDAO;
 import response.Response;
+import response.ResponseDAO;
 import survey.Survey;
 import survey.SurveyDAO;
 import user.User;
@@ -33,12 +35,19 @@ public class Source {
 			throw new ExceptionInInitializerError(ex); 
 		}
 
+		//initalize DAO's access
+		new UserDAO(factory);
+		new SurveyDAO(factory);
+		new ResponseDAO(factory);
+		new QuestionDAO(factory);
+		
 		//run tests here
-		new UserDAO(factory).testDAO();
-		new SurveyDAO(factory).testDAO();
+		UserDAO.testDAO();
+		SurveyDAO.testDAO();
+		ResponseDAO.testDAO();
 		
 		//start the APIs here, Spark will auto traverse them and start the endpoints
-		new UserAPI(factory);
+		new UserAPI();
 		
 		factory.close();
 	}

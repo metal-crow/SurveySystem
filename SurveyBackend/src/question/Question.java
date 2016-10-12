@@ -14,8 +14,7 @@ public class Question {
 	 */
 	public enum Response_Type {
 		S_String,
-		S_Date,
-		S_Time,
+		S_Date,//year,month,day,hour,minute,second,millisecond
 		S_Int,
 		S_Float,
 		S_Bool,
