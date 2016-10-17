@@ -11,22 +11,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import question.Question;
-import survey.Survey;
 
 @SuppressWarnings("serial")
 //composite primary key class
 class ResponsePK implements Serializable{
-	@SuppressWarnings("unused")
 	private int respondant;
-	@SuppressWarnings("unused")
-	private Survey survey;
-	@SuppressWarnings("unused")
+	private int survey_id;
 	private int respondant_id;
 	
-	public ResponsePK(int respondant, Survey survey, int respondant_id) {
+	public ResponsePK(){}
+	public ResponsePK(int respondant, int survey_id, int respondant_id) {
 		this.respondant = respondant;
-		this.survey = survey;
+		this.survey_id = survey_id;
 		this.respondant_id = respondant_id;
+	}
+	
+	@Override
+	public String toString(){
+		return "respondant:"+respondant+" survey:"+survey_id+" respondant_id:"+respondant_id;
 	}
 }
 
@@ -37,16 +39,15 @@ class ResponsePK implements Serializable{
 @IdClass(ResponsePK.class)
 public class Response {
 	@Id
-	@Column(name = "respondant", nullable = true)
+	@Column(name = "respondant")
 	private int respondant;//the responding user. Can be their user id, their hashed user id, or null if informal. An index.
     
 	@Id
-    @Column(name = "respondant_id", nullable = true)
+    @Column(name = "respondant_id")
     private int respondant_id;//if informal response, this is incremented for each new user response to survey.
 
 	@Id
-	@ManyToOne(targetEntity=Survey.class)
-    private Survey survey;//survey being responded to. An index.
+    private int survey_id;//survey being responded to. An index.
         
 	@ManyToOne(targetEntity=Question.class)
     private Question response_to;//the question this is an answer to
@@ -56,9 +57,9 @@ public class Response {
     
     public Response(){}
     
-    public Response(int respondant, Survey survey, int respondant_id, Question response_to, String answer) {
+    public Response(int respondant, int survey_id, int respondant_id, Question response_to, String answer) {
 		this.respondant = respondant;
-		this.survey = survey;
+		this.survey_id = survey_id;
 		this.respondant_id = respondant_id;
 		this.response_to = response_to;
 		this.answer = answer;
@@ -80,12 +81,12 @@ public class Response {
 		this.respondant_id = respondant_id;
 	}
 
-	public Survey getSurvey() {
-		return survey;
+	public int getSurvey_id() {
+		return survey_id;
 	}
 
-	public void setSurvey(Survey survey) {
-		this.survey = survey;
+	public void setSurvey_id(int survey_id) {
+		this.survey_id = survey_id;
 	}
 
 	public Question getResponse_to() {

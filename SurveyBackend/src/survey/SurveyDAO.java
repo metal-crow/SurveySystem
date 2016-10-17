@@ -42,7 +42,7 @@ public class SurveyDAO {
 
 	/**
 	 * Api function for creating a survey
-	 * Returns the created survey 
+	 * Returns the created survey, or null for database error
 	 */
 	public static Survey create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user){
 		Session session = factory.openSession();
@@ -56,6 +56,7 @@ public class SurveyDAO {
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
 			e.printStackTrace(); 
+			survey = null;
 		}finally {
 			session.close(); 
 		}
@@ -81,7 +82,7 @@ public class SurveyDAO {
 			//delete responses
 			if(result){
 				@SuppressWarnings("rawtypes")
-				Query response_query = session.createQuery("delete RESPONSES where survey_id = :id");
+				Query response_query = session.createQuery("delete RESPONSES where survey.id = :id");
 				response_query.setParameter("id", id);
 				response_query.executeUpdate();
 			}
@@ -115,17 +116,14 @@ public class SurveyDAO {
 				Query update_query = session.createQuery("update SURVEYS SET respondant_id_count = :count + 1 WHERE id = :id");
 				update_query.setParameter("id", survey.getId());
 				update_query.setParameter("count", survey.getRespondant_id_count());
+				//save update to object (do even if db failure, to allow a potential retry later)
+				survey.setRespondant_id_count(survey.getRespondant_id_count()+1);
 				result = (update_query.executeUpdate()==1);
-				//save update to object
-				if(result){
-					survey.setRespondant_id_count(survey.getRespondant_id_count()+1);
-				}
 				
 				tx.commit();
 			}catch (HibernateException e) {
 				if (tx!=null) tx.rollback();
 				e.printStackTrace(); 
-				result = false;
 			}finally {
 				session.close(); 
 			}
