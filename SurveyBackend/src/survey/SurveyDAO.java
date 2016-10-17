@@ -82,7 +82,7 @@ public class SurveyDAO {
 			//delete responses
 			if(result){
 				@SuppressWarnings("rawtypes")
-				Query response_query = session.createQuery("delete RESPONSES where survey.id = :id");
+				Query response_query = session.createQuery("delete RESPONSES where survey_id = :id");
 				response_query.setParameter("id", id);
 				response_query.executeUpdate();
 			}
