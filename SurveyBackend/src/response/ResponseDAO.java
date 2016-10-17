@@ -62,6 +62,30 @@ public class ResponseDAO {
 	}
 	
 	/**
+	 * Delete all responses to a given survey
+	 * @param survey_id
+	 */
+	public static void delete_responses(int survey_id){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			
+			@SuppressWarnings("rawtypes")
+			Query response_query = session.createQuery("delete RESPONSES where survey_id = :id");
+			response_query.setParameter("id", survey_id);
+			response_query.executeUpdate();
+			
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+	}
+	
+	/**
 	 * Get list of responses by survey. Does not deserialize by the questions
 	 * @param survey
 	 * @return

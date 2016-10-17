@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import response.ResponseDAO;
 import survey.Survey.User_Response_Type;
 import user.User;
 
@@ -81,10 +82,7 @@ public class SurveyDAO {
 			result = (query.executeUpdate()==1);
 			//delete responses
 			if(result){
-				@SuppressWarnings("rawtypes")
-				Query response_query = session.createQuery("delete RESPONSES where survey_id = :id");
-				response_query.setParameter("id", id);
-				response_query.executeUpdate();
+				ResponseDAO.delete_responses(id);
 			}
 			tx.commit();
 		}catch (HibernateException e) {
