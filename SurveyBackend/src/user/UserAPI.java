@@ -19,7 +19,7 @@ public class UserAPI {
 				String first_name = request.queryParams("first_name");
 				String last_name = request.queryParams("last_name");
 				
-				int id = UserDAO.create_user(email, password_hash, first_name, last_name);
+				int id = UserDAO.create_user(email, password_hash, first_name, last_name).getid();
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
 				return id;

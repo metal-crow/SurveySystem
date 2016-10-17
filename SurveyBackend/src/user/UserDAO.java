@@ -24,36 +24,36 @@ public class UserDAO {
 		String first = Source.random_string(7);
 		String last = Source.random_string(10);
 		
-		int id = create_user(email, pass_hash, first, last);
-		System.out.println(id);
-		assert id>-1;
+		User user = create_user(email, pass_hash, first, last);
+		System.out.println(user.getid());
+		assert user.getid()>-1;
 		
-		boolean result = verify_user(id, "!");
+		boolean result = verify_user(user.getid(), "!");
 		assert result:false;
 		
-		result = verify_user(id, pass_hash);
+		result = verify_user(user.getid(), pass_hash);
 		assert result:true;
 		
-		User user = get_user(id);
-		assert user.getfirst_name().equals(first);
-		assert user.getemail().equals(email);
-		assert user.getpassword_hash().equals(pass_hash);
-		assert user .getlast_name().equals(last);
+		User user2 = get_user(user.getid());
+		assert user2.getfirst_name().equals(first);
+		assert user2.getemail().equals(email);
+		assert user2.getpassword_hash().equals(pass_hash);
+		assert user2.getlast_name().equals(last);
 		
-		assert delete_user(id);
+		assert delete_user(user.getid());
 	}
 	
 	/**
 	 * API request to create user
 	 */
-	public static int create_user(String email, String password_hash, String first_name, String last_name){
+	public static User create_user(String email, String password_hash, String first_name, String last_name){
 		Session session = factory.openSession();
 		Transaction tx = null;
-		Integer user_id = null;
+		User user = null;
 		try{
 			tx = session.beginTransaction();
-			User user = new User(email, password_hash, first_name, last_name);
-			user_id = (Integer) session.save(user); 
+			user = new User(email, password_hash, first_name, last_name);
+			user.setid((Integer) session.save(user)); 
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
@@ -61,7 +61,8 @@ public class UserDAO {
 		}finally {
 			session.close(); 
 		}
-		return user_id;
+		
+		return user;
 	}
 	
 	/**

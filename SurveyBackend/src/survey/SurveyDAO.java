@@ -1,6 +1,6 @@
 package survey;
 
-import java.sql.Date;
+import java.util.Date;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -20,7 +20,12 @@ public class SurveyDAO {
 	}
 	
 	public static void testDAO(){
-		int id = create_survey("test_survey", User_Response_Type.User, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), null);
+		int id = create_survey(
+				"test_survey", 
+				User_Response_Type.User, 
+				new Date(System.currentTimeMillis()), 
+				new Date(System.currentTimeMillis()), 
+				null).getId();
 		System.out.println(id);
 		assert id>-1;
 		
@@ -37,16 +42,16 @@ public class SurveyDAO {
 
 	/**
 	 * Api function for creating a survey
-	 * Returns the id of the created survey 
+	 * Returns the created survey 
 	 */
-	public static int create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user){
+	public static Survey create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user){
 		Session session = factory.openSession();
 		Transaction tx = null;
-		Integer survey_id = null;
+		Survey survey = null;
 		try{
 			tx = session.beginTransaction();
-			Survey survey = new Survey(name, user_response_type, closing, deleting, managing_user);
-			survey_id = (Integer) session.save(survey); 
+			survey = new Survey(name, user_response_type, closing, deleting, managing_user);
+			survey.setId((Integer) session.save(survey)); 
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
@@ -54,7 +59,7 @@ public class SurveyDAO {
 		}finally {
 			session.close(); 
 		}
-		return survey_id;
+		return survey;
 	}
 	
 	/**
