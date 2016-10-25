@@ -1,10 +1,15 @@
 package question;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import survey.Survey;
 
 @Entity(name = "QUESTIONS")
 public class Question {
@@ -21,8 +26,8 @@ public class Question {
 		S_Char,
 	}
 	
-    @Column(name = "survey", nullable = false)
-	private int survey;//survey this is a question for
+	@ManyToOne(targetEntity=Survey.class, optional=false, cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
+	private Survey survey;//survey this is a question for
     
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)//auto increment
@@ -35,17 +40,19 @@ public class Question {
     @Column(name = "response_type", nullable=false)
     private Response_Type response_type;//what to deseralize the response to
 
-	public Question(int survey, String question_text, Response_Type response_type) {
+    public Question() {}
+    
+	public Question(Survey survey, String question_text, Response_Type response_type) {
 		this.survey = survey;
 		this.question_text = question_text;
 		this.response_type = response_type;
 	}
 
-	public int getSurvey() {
+	public Survey getSurvey() {
 		return survey;
 	}
 
-	public void setSurvey(int survey) {
+	public void setSurvey(Survey survey) {
 		this.survey = survey;
 	}
 

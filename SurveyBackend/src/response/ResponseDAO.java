@@ -10,6 +10,8 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import question.Question;
+import question.QuestionDAO;
+import question.Question.Response_Type;
 import survey.Survey;
 import survey.Survey.User_Response_Type;
 import survey.SurveyDAO;
@@ -30,25 +32,26 @@ public class ResponseDAO {
 				new Date(System.currentTimeMillis()), 
 				new Date(System.currentTimeMillis()), 
 				null);
-		create_response(123, survey, null, "this is an answer");
+		Question question = QuestionDAO.create_question(survey, "test question", Response_Type.S_String);
+		create_response(123, survey, question, "this is an answer");
 		get_responses(survey).get(0);
 	}
 
 	/**
 	 * Create response
-	 * @param respondant hash of user id, or user id
+	 * @param respondant hash of user id, or user id, or null if informal
 	 * @param survey
 	 * @param response_to the question
 	 * @param answer string representing the serialized answer
 	 * @return response
 	 */
-	public static Response create_response(int respondant, Survey survey, Question response_to, String answer){
+	public static Response create_response(Integer respondant, Survey survey, Question response_to, String answer){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		Response response = null;
 		try{
 			tx = session.beginTransaction();
-			response = new Response(respondant, survey.getId(), survey.getRespondant_id_count(), response_to, answer);
+			response = new Response(respondant, survey, response_to, answer);
 			session.save(response);
 			SurveyDAO.got_informal_response(survey);
 			tx.commit();
@@ -72,7 +75,7 @@ public class ResponseDAO {
 			tx = session.beginTransaction();
 			
 			@SuppressWarnings("rawtypes")
-			Query response_query = session.createQuery("delete RESPONSES where survey_id = :id");
+			Query response_query = session.createQuery("delete RESPONSES where survey.id = :id");
 			response_query.setParameter("id", survey_id);
 			response_query.executeUpdate();
 			

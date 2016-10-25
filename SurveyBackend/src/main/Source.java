@@ -45,6 +45,7 @@ public class Source {
 		UserDAO.testDAO();
 		SurveyDAO.testDAO();
 		ResponseDAO.testDAO();
+		QuestionDAO.testDAO();
 		
 		//start the APIs here, Spark will auto traverse them and start the endpoints
 		new UserAPI();

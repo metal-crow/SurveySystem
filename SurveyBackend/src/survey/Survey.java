@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ public class Survey {
     @Column(name = "user_response_type", nullable = false)
     private User_Response_Type user_response_type;//enum of how the user response is recorded
     
-    @Column(name = "respondant_id_count", nullable = true)
+    @Column(name = "respondant_id_count")
     private int respondant_id_count = 0;//count for the number of users responded, if informal response used
     
     @Column(name = "closing", nullable = false)
@@ -40,7 +41,7 @@ public class Survey {
     @Column(name = "deleting", nullable = false)
     private Date deleting;//date and time survey is deleted
     
-    @ManyToOne(targetEntity=User.class)
+    @ManyToOne(targetEntity=User.class, optional=true, fetch=FetchType.LAZY)
     private User managing_user;
         
     public Survey(){}

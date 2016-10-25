@@ -2,8 +2,10 @@ package response;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Index;
@@ -11,24 +13,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import question.Question;
+import survey.Survey;
+import survey.Survey.User_Response_Type;
 
 @SuppressWarnings("serial")
 //composite primary key class
 class ResponsePK implements Serializable{
 	private int respondant;
-	private int survey_id;
+	private Survey survey;
 	private int respondant_id;
 	
 	public ResponsePK(){}
-	public ResponsePK(int respondant, int survey_id, int respondant_id) {
+	public ResponsePK(int respondant, Survey survey, int respondant_id) {
 		this.respondant = respondant;
-		this.survey_id = survey_id;
+		this.survey = survey;
 		this.respondant_id = respondant_id;
 	}
 	
 	@Override
 	public String toString(){
-		return "respondant:"+respondant+" survey:"+survey_id+" respondant_id:"+respondant_id;
+		return "respondant:"+respondant+" survey:"+survey.getId()+" respondant_id:"+respondant_id;
 	}
 }
 
@@ -40,16 +44,17 @@ class ResponsePK implements Serializable{
 public class Response {
 	@Id
 	@Column(name = "respondant")
-	private int respondant;//the responding user. Can be their user id, their hashed user id, or null if informal. An index.
+	private int respondant;//the responding user. Can be their user id, their hashed user id, or -1 if informal. An index.
     
 	@Id
     @Column(name = "respondant_id")
     private int respondant_id;//if informal response, this is incremented for each new user response to survey.
 
 	@Id
-    private int survey_id;//survey being responded to. An index.
+	@ManyToOne(targetEntity=Survey.class, optional=false, cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)//not going to need survey that much with response
+    private Survey survey;//survey being responded to. An index.
         
-	@ManyToOne(targetEntity=Question.class)
+	@ManyToOne(targetEntity=Question.class,optional=false, cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)//need question to deserialize, so need nearly always
     private Question response_to;//the question this is an answer to
 
     @Column(name = "answer", nullable = false)
@@ -57,10 +62,14 @@ public class Response {
     
     public Response(){}
     
-    public Response(int respondant, int survey_id, int respondant_id, Question response_to, String answer) {
-		this.respondant = respondant;
-		this.survey_id = survey_id;
-		this.respondant_id = respondant_id;
+    public Response(Integer respondant, Survey survey, Question response_to, String answer) {
+    	if(survey.getUser_response_type()==User_Response_Type.Informal){
+    		this.respondant = -1;
+    	}else{
+    		this.respondant = respondant;
+    	}
+		this.survey = survey;
+		this.respondant_id = survey.getRespondant_id_count();
 		this.response_to = response_to;
 		this.answer = answer;
 	}
@@ -81,12 +90,12 @@ public class Response {
 		this.respondant_id = respondant_id;
 	}
 
-	public int getSurvey_id() {
-		return survey_id;
+	public Survey getSurvey() {
+		return survey;
 	}
 
-	public void setSurvey_id(int survey_id) {
-		this.survey_id = survey_id;
+	public void setSurvey(Survey survey) {
+		this.survey = survey;
 	}
 
 	public Question getResponse_to() {

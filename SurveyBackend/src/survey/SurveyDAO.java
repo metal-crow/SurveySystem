@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import question.QuestionDAO;
 import response.ResponseDAO;
 import survey.Survey.User_Response_Type;
 import user.User;
@@ -83,6 +84,7 @@ public class SurveyDAO {
 			//delete responses
 			if(result){
 				ResponseDAO.delete_responses(id);
+				QuestionDAO.delete_questions(id);
 			}
 			tx.commit();
 		}catch (HibernateException e) {
