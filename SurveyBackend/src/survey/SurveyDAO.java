@@ -11,7 +11,6 @@ import org.hibernate.query.Query;
 import question.QuestionDAO;
 import response.ResponseDAO;
 import survey.Survey.User_Response_Type;
-import user.User;
 
 public class SurveyDAO {
 	
@@ -27,7 +26,7 @@ public class SurveyDAO {
 				User_Response_Type.User, 
 				new Date(System.currentTimeMillis()), 
 				new Date(System.currentTimeMillis()), 
-				null).getId();
+				-1).getId();
 		System.out.println(id);
 		assert id>-1;
 		
@@ -46,13 +45,13 @@ public class SurveyDAO {
 	 * Api function for creating a survey
 	 * Returns the created survey, or null for database error
 	 */
-	public static Survey create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user){
+	public static Survey create_survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, int managing_user_id){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		Survey survey = null;
 		try{
 			tx = session.beginTransaction();
-			survey = new Survey(name, user_response_type, closing, deleting, managing_user);
+			survey = new Survey(name, user_response_type, closing, deleting, managing_user_id);
 			survey.setId((Integer) session.save(survey)); 
 			tx.commit();
 		}catch (HibernateException e) {

@@ -4,6 +4,9 @@ import static spark.Spark.post;
 
 import java.net.HttpURLConnection;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class UserAPI {
 	
     public UserAPI(){
@@ -11,28 +14,53 @@ public class UserAPI {
     }
 	
 	private void setupEndpoints() {
+		/**
+		 * Creates a user
+		 * Requires json arguments
+		 * 	@param email
+		 *  @param password - (the hash)
+		 *  @param first_name
+		 *  @param last_name
+		 * @return id of created user
+		 */
 		post("/createUser", "application/json", (request, response) -> {
 			try{
-				String email = request.queryParams("email");
-				//TODO add ability to check email domain and require it match a given config value
-				String password_hash = request.queryParams("password");
-				String first_name = request.queryParams("first_name");
-				String last_name = request.queryParams("last_name");
+				JsonObject json_user_obj = new JsonParser().parse(request.body()).getAsJsonObject();
 				
-				int id = UserDAO.create_user(email, password_hash, first_name, last_name).getid();
+				//TODO add ability to check email domain and require it match a given config value
+				
+				User user = UserDAO.create_user(
+						json_user_obj.get("email").getAsString(), 
+						json_user_obj.get("password").getAsString(), 
+						json_user_obj.get("first_name").getAsString(),
+						json_user_obj.get("last_name").getAsString());
+				
+				if(user==null){
+					response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
+					return -1;
+				}
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
-				return id;
+				return user.getid();
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
 				return e.getMessage();
 			}
 		});
 		
-		post("/login", (request, response) -> {
+		/**
+		 * Verifies user login. 
+		 * Requires json arguments
+		 * 	@param id - user id
+		 *  @param password - password hash
+		 * @return HTTP_ACCEPTED on login, HTTP_NOT_ACCEPTABLE on failure
+		 */
+		post("/login", "application/json", (request, response) -> {
 			try{
-				Integer id = Integer.valueOf(request.queryParams("id"));
-				String password_hash = request.queryParams("password");
+				JsonObject verification_obj = new JsonParser().parse(request.body()).getAsJsonObject();
+
+				Integer id = verification_obj.get("id").getAsInt();
+				String password_hash = verification_obj.get("password").getAsString();
 				boolean valid = UserDAO.verify_user(id, password_hash);
 				if(valid){
 					response.status(HttpURLConnection.HTTP_ACCEPTED);

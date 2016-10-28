@@ -27,7 +27,7 @@ public class QuestionDAO {
 				User_Response_Type.Informal, 
 				new Date(System.currentTimeMillis()), 
 				new Date(System.currentTimeMillis()), 
-				null);
+				-1);
 		create_question(survey, "test question", Response_Type.S_String);
 	}
 

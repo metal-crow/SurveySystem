@@ -31,7 +31,7 @@ public class ResponseDAO {
 				User_Response_Type.Informal, 
 				new Date(System.currentTimeMillis()), 
 				new Date(System.currentTimeMillis()), 
-				null);
+				-1);
 		Question question = QuestionDAO.create_question(survey, "test question", Response_Type.S_String);
 		create_response(123, survey, question, "this is an answer");
 		get_responses(survey).get(0);

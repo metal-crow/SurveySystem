@@ -9,10 +9,13 @@ import question.QuestionDAO;
 import response.Response;
 import response.ResponseDAO;
 import survey.Survey;
+import survey.SurveyAPI;
 import survey.SurveyDAO;
 import user.User;
 import user.UserAPI;
 import user.UserDAO;
+
+import static spark.Spark.*;
 
 public class Source {
 	
@@ -47,8 +50,11 @@ public class Source {
 		ResponseDAO.testDAO();
 		QuestionDAO.testDAO();
 		
+        get("/hello", (req, res) -> "Hello World");
+        
 		//start the APIs here, Spark will auto traverse them and start the endpoints
 		new UserAPI();
+		new SurveyAPI();
 		
 		factory.close();
 	}

@@ -4,13 +4,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-import user.User;
 
 @Entity(name = "SURVEYS")
 public class Survey {
@@ -18,7 +14,20 @@ public class Survey {
 	public enum User_Response_Type{
 		Informal,//no user login required, anyone can response and respond more than 1 time
 		Anonymous,//user login required and checked, but user id hashed on submission
-		User//full user id saved
+		User;//full user id saved
+		
+		public static User_Response_Type fromInt(int in){
+			switch (in) {
+				case 0:
+					return User_Response_Type.Informal;
+				case 1:
+					return User_Response_Type.Anonymous;
+				case 2:
+					return User_Response_Type.User;
+				default:
+					return null;
+			}
+		}
 	}
 	
     @Id 
@@ -41,17 +50,17 @@ public class Survey {
     @Column(name = "deleting", nullable = false)
     private Date deleting;//date and time survey is deleted
     
-    @ManyToOne(targetEntity=User.class, optional=true, fetch=FetchType.LAZY)
-    private User managing_user;
+    @Column(name = "managing_user_id")
+    private int managing_user_id;//Don't bother making this a stored class since we don't have it when creating survey
         
     public Survey(){}
     
-    public Survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, User managing_user) {
+    public Survey(String name, User_Response_Type user_response_type, Date closing, Date deleting, int managing_user_id) {
     	this.survey_name = name;
     	this.user_response_type = user_response_type;
     	this.closing = closing;
     	this.deleting = deleting;
-    	this.managing_user = managing_user;
+    	this.managing_user_id = managing_user_id;
 	}
 
 	public int getRespondant_id_count() {
@@ -62,12 +71,12 @@ public class Survey {
 		this.respondant_id_count = respondant_id_count;
 	}
 
-	public User getManaging_user() {
-		return managing_user;
+	public int getManaging_user_id() {
+		return managing_user_id;
 	}
 
-	public void setManaging_user(User managing_user) {
-		this.managing_user = managing_user;
+	public void setManaging_user_id(int managing_user_id) {
+		this.managing_user_id = managing_user_id;
 	}
 
 	public int getId() {
