@@ -19,20 +19,21 @@ import survey.Survey.User_Response_Type;
 @SuppressWarnings("serial")
 //composite primary key class
 class ResponsePK implements Serializable{
+	@SuppressWarnings("unused")
 	private int respondant;
+	@SuppressWarnings("unused")
 	private Survey survey;
+	@SuppressWarnings("unused")
 	private int respondant_id;
+	@SuppressWarnings("unused")
+	private Question response_to;
 	
 	public ResponsePK(){}
-	public ResponsePK(int respondant, Survey survey, int respondant_id) {
+	public ResponsePK(int respondant, Survey survey, int respondant_id, Question response_to) {
 		this.respondant = respondant;
 		this.survey = survey;
 		this.respondant_id = respondant_id;
-	}
-	
-	@Override
-	public String toString(){
-		return "respondant:"+respondant+" survey:"+survey.getId()+" respondant_id:"+respondant_id;
+		this.response_to = response_to;
 	}
 }
 
@@ -54,8 +55,9 @@ public class Response {
 	@ManyToOne(targetEntity=Survey.class, optional=false, cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)//not going to need survey that much with response
     private Survey survey;//survey being responded to. An index.
         
+	@Id
 	@ManyToOne(targetEntity=Question.class,optional=false, cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)//need question to deserialize, so need nearly always
-    private Question response_to;//the question this is an answer to
+    private Question response_to;//the question this is an answer to. An index
 
     @Column(name = "answer", nullable = false)
     private String answer;
