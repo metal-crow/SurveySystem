@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load static %}
+	
+	<meta charset="utf-8" />
+	
+	<title>SOMETITLE</title>
+	
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="{% static "css/SOMETITLE-base.css" %}" />
+	<link rel="stylesheet" href="{% static "css/SOMETITLE-landing.css" %}" />
+</head>
+<body>
+	<div class="ts-wrapper">
+		<div class="ts-masthead">
+			<div class="container">
+				<h2>Tool Share</h2>
+				<p class="subtitle">
+					No need to spend a fortune on a tool that you'll only need to use a few times. Sign up for ToolShare now to begin borrowing the tools that you need to finish your project, and sharing tools that you own to help others finish theirs.
+				</p>
+				<p>
+					<a href="/login/" class="landing-button">Login</a>
+					<a href="/signup/" class="landing-button">Sign Up</a>
+				</p>
+			</div>
+		</div>
+		<div class="ts-content">
+			<div class="container">
+				<ul class="ts-steps">
+					<li class="step-signup col-md-3 col-sm-6">
+						<div class="ts-step">
+							<img src="{% static "images/step-signup.png" %}" />
+							<h3>Sign up for ToolShare</h3>
+							<p>
+								Start by clicking the <em>Sign Up</em> button in the top-left corner of this page. You will then be asked to fill out a small form to create your user account. After this quick process you will be ready to start using ToolShare!
+							</p>
+						</div>
+					</li>
+					<li class="step-findtool col-md-3 col-sm-6">
+						<div class="ts-step">
+							<img src="{% static "images/step-findtool.png" %}" />
+							<h3>Search for Tools</h3>
+							<p>
+								After creating your account and logging into the site, you will have access to a list of tools that you are able to borrow near your location. Just search or browse through this list to find the tool you're looking for!
+							</p>
+						</div>
+					</li>
+					<li class="step-borrow col-md-3 col-sm-6">
+						<div class="ts-step">
+							<img src="{% static "images/step-borrow.png" %}" />
+							<h3>Borrow a Tool</h3>
+							<p>
+								Once you've found the tool you want, just click the borrow button next to it and a request will be sent to the owner of the tool. After the owner approves your request you will be able to setup a meeting time to pick up the tool!
+							</p>
+						</div>
+					</li>
+					<li class="step-share col-md-3 col-sm-6">
+						<div class="ts-step">
+							<img src="{% static "images/step-share.png" %}" />
+							<h3>Share Your Tools</h3>
+							<p>
+								Give back to the community by offering to share any tools that you own. This allows ToolShare to be a thriving community of people with similar interests.
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="ts-footer container">
+		&copy; 2014 Investiny Corp.
+		<ul class="ts-navlinks">
+			<li><a href="/terms-of-use/">Terms of Use</a></li>
+		</ul>
+	</footer>
+</body>
+</html>
