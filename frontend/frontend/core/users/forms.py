@@ -79,8 +79,8 @@ class SSUserCreationForm(UserCreationForm):
         # but it sets a nicer error message than the ORM. See #13147.
         username = self.cleaned_data["username"]
         try:
-            TSUser._default_manager.get(username=username)
-        except TSUser.DoesNotExist:
+            SSUser._default_manager.get(username=username)
+        except SSUser.DoesNotExist:
             return username
         raise ValidationError(self.error_messages['duplicate_username'])
 
@@ -89,8 +89,8 @@ class SSUserCreationForm(UserCreationForm):
         # but it sets a nicer error message than the ORM. See #13147.
         email = self.cleaned_data["email"]
         try:
-            TSUser._default_manager.get(email=email)
-        except TSUser.DoesNotExist:
+            SSUser._default_manager.get(email=email)
+        except SSUser.DoesNotExist:
             return email
         raise ValidationError(self.error_messages['duplicate_email'])
 
@@ -144,6 +144,6 @@ class SSUserChangeForm(UserChangeForm):
             "email",)
 
     def __init__(self, *args, **kwargs):
-        super(TSUserChangeForm, self).__init__(*args, **kwargs)
+        super(SSUserChangeForm, self).__init__(*args, **kwargs)
         self.fields.pop('username')
         self.fields.pop('password')
