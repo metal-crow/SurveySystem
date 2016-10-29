@@ -16,9 +16,21 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from django.contrib.auth import views as auth_views
+
 urlpatterns = [
+	
+	url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, name='logout'),
+
 	# make the home page direct to the landing page view
-    (r'^$', 'toolshare.views.landing'),
+    url(r'^$', 'frontend.views.landing'),
+	
+	# the overview page gives logged in users information
+    url(r'^overview/$', 'frontend.views.ss_overview'),
+
+    # include URLs from the user apps
+    url(r'^', include('frontend.core.users.urls')),
 
     url(r'^admin/', admin.site.urls),
 ]
