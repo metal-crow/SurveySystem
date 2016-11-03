@@ -4,19 +4,26 @@ import static spark.Spark.post;
 
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import question.Question;
+import question.Question.Response_Type;
+import question.QuestionDAO;
 import survey.Survey.User_Response_Type;
 
 public class SurveyAPI {
 
 	public SurveyAPI(){
 		setupEndpoints();
+	}
+	
+	//the object eqch question must be passed ad
+	class Question_JSON_wrapper{
+		String text;
+		int response_type;
 	}
 
 	private void setupEndpoints() {
@@ -52,7 +59,10 @@ public class SurveyAPI {
 				}
 				
 				//create questions for survey
-				
+				Question_JSON_wrapper[] questions = new Gson().fromJson(survey_obj.get("questions"), Question_JSON_wrapper[].class);
+				for(Question_JSON_wrapper question:questions){
+					QuestionDAO.create_question(survey, question.text, Response_Type.fromInt(question.response_type));
+				}
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
 				return survey.getId();
