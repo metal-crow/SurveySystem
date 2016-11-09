@@ -1,5 +1,6 @@
 package question;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.hibernate.HibernateException;
@@ -10,8 +11,8 @@ import org.hibernate.query.Query;
 
 import question.Question.Response_Type;
 import survey.Survey;
-import survey.SurveyDAO;
 import survey.Survey.User_Response_Type;
+import survey.SurveyDAO;
 
 public class QuestionDAO {
 
@@ -80,6 +81,31 @@ public class QuestionDAO {
 		}	
 	}
 	
+	/**
+	 * Get all questions for a given survey
+	 * @param survey_id
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static ArrayList<Question> get_questions(int survey_id){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		ArrayList<Question> questions=null;
+		try{
+			tx = session.beginTransaction();
+			
+			Query query = session.createQuery("from QUESTIONS where survey.id = :id ");
+	        query.setParameter("id", survey_id);
+	        questions = new ArrayList<Question>(query.getResultList());
+			
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+		return questions;
+	}	
 	
 }
 	
