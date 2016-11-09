@@ -29,7 +29,11 @@ public class QuestionDAO {
 				new Date(System.currentTimeMillis()), 
 				new Date(System.currentTimeMillis()), 
 				-1);
-		create_question(survey, "test question", Response_Type.S_String);
+		Question question = create_question(survey, "test question", Response_Type.S_String);
+		assert question.getSurvey().getId()==survey.getId();
+		assert question.getQuestion_text().equals("test question");
+		assert question.getResponse_type()==Response_Type.S_String;
+		assert question.getQuestion_id()>-1;
 	}
 
 	/**
