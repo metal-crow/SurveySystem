@@ -1,15 +1,17 @@
 package survey;
 
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import question.Question;
 import question.Question.Response_Type;
 import question.QuestionDAO;
 import survey.Survey.User_Response_Type;
@@ -66,6 +68,26 @@ public class SurveyAPI {
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
 				return survey.getId();
+			}catch(Exception e){
+				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
+				return e.getMessage();
+			}
+		});
+		
+		/**
+		 * Get and return all info about the given survey
+		 * Questions, name, etc
+		 */
+		get("/survey/:id", "application/json", (request, response) -> {
+			try{
+				Survey survey = SurveyDAO.get_survey(Integer.valueOf(request.params("id")));
+				JsonObject survey_json = new JsonObject();
+				survey_json.addProperty("name", survey.getSurvey_name());
+				
+				ArrayList<Question> questions = QuestionDAO.get_questions(survey.getId());
+				survey_json.addProperty("questions",new Gson().toJson(questions));
+				
+				return survey_json.toString();
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
 				return e.getMessage();
