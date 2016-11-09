@@ -34,7 +34,7 @@ public class ResponseDAO {
 				-1);
 		Question question = QuestionDAO.create_question(survey, "test question", Response_Type.S_String);
 		create_response(123, survey, question, "this is an answer");
-		get_responses(survey).get(0);
+		get_responses(survey.getId()).get(0);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class ResponseDAO {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ArrayList<Response> get_responses(Survey survey){
+	public static ArrayList<Response> get_responses(int survey_id){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		ArrayList<Response> responses=null;
@@ -102,7 +102,7 @@ public class ResponseDAO {
 			tx = session.beginTransaction();
 			
 			Query query = session.createQuery("from RESPONSES where survey_id = :id ");
-	        query.setParameter("id", survey.getId());
+	        query.setParameter("id", survey_id);
 	        responses = new ArrayList<Response>(query.getResultList());
 			
 			tx.commit();
