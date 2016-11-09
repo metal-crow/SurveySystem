@@ -34,7 +34,15 @@ public class ResponseDAO {
 				-1);
 		Question question = QuestionDAO.create_question(survey, "test question", Response_Type.S_String);
 		create_response(123, survey, question, "this is an answer");
-		get_responses(survey.getId()).get(0);
+		ArrayList<Response> responses = get_responses(survey.getId());
+		
+		assert responses.size()==1;
+		assert responses.get(0).getRespondant()==123;
+		assert responses.get(0).getSurvey().getId()==survey.getId();
+		assert responses.get(0).getResponse_to().getQuestion_id()==question.getQuestion_id();
+		assert responses.get(0).getAnswer().equals("this is an answer");
+		
+		assert SurveyDAO.delete_survey(survey.getId());
 	}
 
 	/**

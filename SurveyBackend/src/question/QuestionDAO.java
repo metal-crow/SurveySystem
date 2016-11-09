@@ -34,6 +34,7 @@ public class QuestionDAO {
 		assert question.getQuestion_text().equals("test question");
 		assert question.getResponse_type()==Response_Type.S_String;
 		assert question.getQuestion_id()>-1;
+		assert SurveyDAO.delete_survey(survey.getId());
 	}
 
 	/**
