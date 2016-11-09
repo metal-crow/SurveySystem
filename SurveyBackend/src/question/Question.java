@@ -43,6 +43,25 @@ public class Question {
 					return null;
 			}
 		}
+		
+		public static int toInt(Response_Type in){
+			switch (in) {
+				case S_String:
+					return 0;
+				case S_Date:
+					return 1;
+				case S_Int:
+					return 2;
+				case S_Float:
+					return 3;
+				case S_Bool:
+					return 4;
+				case S_Char:
+					return 5;
+				default:
+					return -1;
+			}
+		}
 	}
 	
 	@ManyToOne(targetEntity=Survey.class, optional=false, cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
