@@ -55,8 +55,6 @@ public class Source {
 		//start the APIs here, Spark will auto traverse them and start the endpoints
 		new UserAPI();
 		new SurveyAPI();
-		
-		factory.close();
 	}
 	
 	/**
