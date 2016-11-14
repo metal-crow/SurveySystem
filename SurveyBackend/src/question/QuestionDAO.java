@@ -34,6 +34,7 @@ public class QuestionDAO {
 		assert question.getQuestion_text().equals("test question");
 		assert question.getResponse_type()==Response_Type.S_String;
 		assert question.getQuestion_id()>-1;
+		assert get_question(question.getQuestion_id()).getQuestion_text().equals("test question");
 		assert SurveyDAO.delete_survey(survey.getId());
 	}
 
@@ -112,5 +113,23 @@ public class QuestionDAO {
 		return questions;
 	}	
 	
+	public static Question get_question(int question_id){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		Question question=null;
+		try{
+			tx = session.beginTransaction();
+			
+			question = (Question) session.get(Question.class, question_id);
+			
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+		return question;
+	}	
 }
 	
