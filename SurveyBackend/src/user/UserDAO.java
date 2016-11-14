@@ -102,10 +102,10 @@ public class UserDAO {
 			tx = session.beginTransaction();
 			
 			@SuppressWarnings("unchecked")
-			Query<Integer> query = session.createQuery("select id from USERS where id = :id and password_hash = :password_hash");
+			Query<Integer> query = session.createQuery("select count(1) from USERS where id = :id and password_hash = :password_hash");
 			query.setParameter("id", id);
 			query.setParameter("password_hash", password_hash);
-			password_match = (1==query.getMaxResults());
+			password_match = query.getFirstResult()==1;
 			
 			tx.commit();
 		}catch (HibernateException e) {
