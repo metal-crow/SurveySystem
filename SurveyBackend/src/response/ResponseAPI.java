@@ -37,9 +37,9 @@ public class ResponseAPI {
 				JsonObject json = new JsonParser().parse(request.body()).getAsJsonObject();
 
 				Survey survey = SurveyDAO.get_survey(Integer.valueOf(request.params("survey_id")));
-				Integer user_id = json.get("user_id").getAsInt();
 
 				if(survey.getUser_response_type()==User_Response_Type.User || survey.getUser_response_type()==User_Response_Type.Anonymous){
+					Integer user_id = json.get("user_id").getAsInt();
 					String password_hash = json.get("password").getAsString();
 					//verify user logged in if survey requires it
 					if(!UserDAO.verify_user(user_id, password_hash)){
@@ -61,13 +61,13 @@ public class ResponseAPI {
 				switch(survey.getUser_response_type()){
 					case Anonymous:
 						MessageDigest digest = MessageDigest.getInstance("SHA-256");
-						user_response_id = ByteBuffer.wrap(digest.digest(user_id.toString().getBytes())).getInt();
+						user_response_id = ByteBuffer.wrap(digest.digest(json.get("user_id").getAsString().getBytes())).getInt();
 						break;
 					case Informal:
 						user_response_id=-1;
 						break;
 					case User:
-						user_response_id=user_id;
+						user_response_id=json.get("user_id").getAsInt();
 						break;
 					default:
 						break;					
@@ -82,7 +82,7 @@ public class ResponseAPI {
 				}
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
-				return 1;
+				return null;
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
 				return e.getMessage();

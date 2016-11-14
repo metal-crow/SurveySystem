@@ -72,7 +72,7 @@ public class SurveyAPI {
 
 				//create survey object
 				String survey_name = survey_obj.get("survey_name").getAsString();
-				User_Response_Type response_type = User_Response_Type.fromInt(survey_obj.get("response_type").getAsInt());
+				User_Response_Type response_type = User_Response_Type.fromInt(survey_obj.get("user_response_type").getAsInt());
 				DateFormat df = DateFormat.getDateInstance();
 				Date closing = df.parse(survey_obj.get("closing_date").getAsString());
 				Date deleting = df.parse(survey_obj.get("deleting_date").getAsString());
@@ -107,20 +107,24 @@ public class SurveyAPI {
 		 * Get and return all info about the given survey
 		 * Questions, name, etc
 		 */
-		post("/survey/:id", "application/json", (request, response) -> {
+		post("/survey/:survey_id", "application/json", (request, response) -> {
 			try{
-				Survey survey = SurveyDAO.get_survey(Integer.valueOf(request.params("id")));
+				Survey survey = SurveyDAO.get_survey(Integer.valueOf(request.params("survey_id")));
 				if(survey==null){
 					response.status(HttpURLConnection.HTTP_NOT_FOUND);
 					return -1;
 				}
 				
-				int user_id = new JsonParser().parse(request.body()).getAsJsonObject().get("user_id").getAsInt();
+				JsonObject optional_args = new JsonParser().parse(request.body()).getAsJsonObject();
 				
 				JsonObject survey_json = new JsonObject();
 				survey_json.addProperty("name", survey.getSurvey_name());
 				survey_json.addProperty("closing_date", survey.getClosing().getTime());
-				survey_json.addProperty("has_user_responded", ResponseDAO.has_responded(survey.getId(), user_id));
+				if(optional_args.has("user_id")){
+					survey_json.addProperty("has_user_responded", ResponseDAO.has_responded(survey.getId(), optional_args.get("user_id").getAsInt()));
+				}else{
+					survey_json.addProperty("has_user_responded", false);
+				}
 				survey_json.addProperty("is_informal", survey.getUser_response_type()==User_Response_Type.Informal);
 				
 				ArrayList<Question> questions = QuestionDAO.get_questions(survey.getId());

@@ -96,7 +96,7 @@ public class SurveyDAO {
 	
 	/**
 	 * Increment the count for the number of informal users who've responded
-	 * No effect if this is not a formal survey
+	 * No effect if this is not an informal survey
 	 * @param survey
 	 * @return true on success, and the passed survey is altered
 	 */
