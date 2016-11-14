@@ -116,5 +116,7 @@ public class SurveyAPI {
 				return e.getMessage();
 			}
 		});
+		
+		//TODO allow managing user to edit survey
 	}
 }
