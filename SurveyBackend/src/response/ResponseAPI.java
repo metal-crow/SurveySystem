@@ -5,6 +5,7 @@ import static spark.Spark.post;
 import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -44,17 +45,20 @@ public class ResponseAPI {
 					//verify user logged in if survey requires it
 					if(!UserDAO.verify_user(user_id, password_hash)){
 						response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
-						return -3;
+						return -4;
 					}
 					//also verify user has not responded to survey yet
 					if(ResponseDAO.has_responded(survey.getId(), user_id)){
 						response.status(HttpURLConnection.HTTP_FORBIDDEN);
-						return -2;
+						return -3;
 					}
 				}
 				
 				//verify survey not closed
-				
+				if(new Date(System.currentTimeMillis()).after(survey.getClosing())){
+					response.status(HttpURLConnection.HTTP_FORBIDDEN);
+					return -2;
+				}
 				
 				int user_response_id=-1;
 				//fix this in the real world, use bcrypt 
