@@ -51,6 +51,7 @@ public class SurveyAPI {
 		 * 	@param closing_date
 		 * 	@param deleting_date
 		 * 	@param user_id - user who created and now owns the survey
+		 *  @param questions - array of input questions
 		 * 	
 		 * @return id of created survey
 		 */
