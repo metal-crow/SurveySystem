@@ -21,7 +21,7 @@ public class UserAPI {
 		 *  @param password - (the hash)
 		 *  @param first_name
 		 *  @param last_name
-		 * @return id of created user
+		 * @return success/failure
 		 */
 		post("/createUser", "application/json", (request, response) -> {
 			try{
@@ -37,11 +37,10 @@ public class UserAPI {
 				
 				if(user==null){
 					response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
-					return -1;
 				}
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
-				return user.getid();
+				return null;
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
 				return e.getMessage();
@@ -51,23 +50,23 @@ public class UserAPI {
 		/**
 		 * Verifies user login. 
 		 * Requires json arguments
-		 * 	@param id - user id
+		 * 	@param email - user email
 		 *  @param password - password hash
-		 * @return HTTP_ACCEPTED on login, HTTP_NOT_ACCEPTABLE on failure
+		 * @return HTTP_ACCEPTED and User_Id on login, HTTP_NOT_ACCEPTABLE on failure.
 		 */
 		post("/login", "application/json", (request, response) -> {
 			try{
 				JsonObject verification_obj = new JsonParser().parse(request.body()).getAsJsonObject();
 
-				Integer id = verification_obj.get("id").getAsInt();
+				String email = verification_obj.get("email").getAsString();
 				String password_hash = verification_obj.get("password").getAsString();
-				boolean valid = UserDAO.verify_user(id, password_hash);
+				boolean valid = UserDAO.verify_user(email, password_hash);
 				if(valid){
 					response.status(HttpURLConnection.HTTP_ACCEPTED);
-					return "Login Successful";
+					return UserDAO.get_user(email).getid();
 				}else{
 					response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
-					return "Invalid Login";
+					return -1;
 				}
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);

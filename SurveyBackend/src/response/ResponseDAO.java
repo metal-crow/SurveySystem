@@ -41,6 +41,8 @@ public class ResponseDAO {
 		assert responses.get(0).getSurvey().getId()==survey.getId();
 		assert responses.get(0).getResponse_to().getQuestion_id()==question.getQuestion_id();
 		assert responses.get(0).getAnswer().equals("this is an answer");
+		assert has_responded(survey.getId(), 123)==true;
+		assert has_responded(survey.getId(), 999)==false;
 		
 		assert SurveyDAO.delete_survey(survey.getId());
 	}
@@ -121,5 +123,31 @@ public class ResponseDAO {
 			session.close(); 
 		}
 		return responses;
+	}
+
+	/**
+	 * Get if user has already responded to this survey
+	 */
+	@SuppressWarnings("rawtypes")
+	public static boolean has_responded(int survey_id, int user_id) {
+		Session session = factory.openSession();
+		Transaction tx = null;
+		boolean has_responded=true;
+		try{
+			tx = session.beginTransaction();
+			
+			Query query = session.createQuery("select count(1) from RESPONSES where survey_id = :id and respondant = :user_id");
+	        query.setParameter("id", survey_id);
+	        query.setParameter("user_id", user_id);
+	        has_responded = query.uniqueResultOptional().equals(1);
+			
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+		return has_responded;
 	}	
 }

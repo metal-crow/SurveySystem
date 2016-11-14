@@ -14,7 +14,9 @@ import com.google.gson.JsonParser;
 import question.Question;
 import question.Question.Response_Type;
 import question.QuestionDAO;
+import response.ResponseDAO;
 import survey.Survey.User_Response_Type;
+import user.UserDAO;
 
 public class SurveyAPI {
 
@@ -46,11 +48,12 @@ public class SurveyAPI {
 		/**
 		 * Create survey and all questions corresponding to survey
 		 * Requires json arguments
+		 *  @param user_id - user who created and now owns the survey
+		 *  @param password - password hash of user
 		 * 	@param survey_name
 		 * 	@param response_type - int corresponding to User_Response_Type
 		 * 	@param closing_date
 		 * 	@param deleting_date
-		 * 	@param user_id - user who created and now owns the survey
 		 *  @param questions - array of input questions
 		 * 	
 		 * @return id of created survey
@@ -59,13 +62,25 @@ public class SurveyAPI {
 			try{
 				JsonObject survey_obj = new JsonParser().parse(request.body()).getAsJsonObject();
 
+				//verify user
+				int user_id = survey_obj.get("user_id").getAsInt();
+				String password = survey_obj.get("password").getAsString();
+				if(!UserDAO.verify_user(user_id, password)){
+					response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+					return -3;
+				}					
+
 				//create survey object
 				String survey_name = survey_obj.get("survey_name").getAsString();
 				User_Response_Type response_type = User_Response_Type.fromInt(survey_obj.get("response_type").getAsInt());
 				DateFormat df = DateFormat.getDateInstance();
 				Date closing = df.parse(survey_obj.get("closing_date").getAsString());
 				Date deleting = df.parse(survey_obj.get("deleting_date").getAsString());
-				int user_id = survey_obj.get("user_id").getAsInt();
+				//verification of dates
+				if(closing.before(new Date(System.currentTimeMillis())) || deleting.before(new Date(System.currentTimeMillis())) || closing.after(deleting)){
+					response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+					return -2;
+				}
 
 				Survey survey = SurveyDAO.create_survey(survey_name, response_type, closing, deleting, user_id);
 				
@@ -92,15 +107,21 @@ public class SurveyAPI {
 		 * Get and return all info about the given survey
 		 * Questions, name, etc
 		 */
-		get("/survey/:id", "application/json", (request, response) -> {
+		post("/survey/:id", "application/json", (request, response) -> {
 			try{
 				Survey survey = SurveyDAO.get_survey(Integer.valueOf(request.params("id")));
 				if(survey==null){
 					response.status(HttpURLConnection.HTTP_NOT_FOUND);
-					return "Survey not found";
+					return -1;
 				}
+				
+				int user_id = new JsonParser().parse(request.body()).getAsJsonObject().get("user_id").getAsInt();
+				
 				JsonObject survey_json = new JsonObject();
 				survey_json.addProperty("name", survey.getSurvey_name());
+				survey_json.addProperty("closing_date", survey.getClosing().getTime());
+				survey_json.addProperty("has_user_responded", ResponseDAO.has_responded(survey.getId(), user_id));
+				survey_json.addProperty("is_informal", survey.getUser_response_type()==User_Response_Type.Informal);
 				
 				ArrayList<Question> questions = QuestionDAO.get_questions(survey.getId());
 				//convert question objects to JSON convertable objects
@@ -111,6 +132,7 @@ public class SurveyAPI {
 				//add json of questions to response
 				survey_json.addProperty("questions",new Gson().toJson(questions_json));
 				
+				response.status(HttpURLConnection.HTTP_OK);
 				return survey_json.toString();
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);

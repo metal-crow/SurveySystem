@@ -27,7 +27,6 @@ public class SurveyDAO {
 				new Date(System.currentTimeMillis()), 
 				new Date(System.currentTimeMillis()), 
 				-1).getId();
-		System.out.println(id);
 		assert id>-1;
 		
 		Survey survey = get_survey(id);

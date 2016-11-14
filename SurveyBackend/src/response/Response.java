@@ -60,7 +60,7 @@ public class Response {
     private Question response_to;//the question this is an answer to. An index
 
     @Column(name = "answer", nullable = false)
-    private String answer;
+    private String answer;//Serialized answer.
     
     public Response(){}
     
