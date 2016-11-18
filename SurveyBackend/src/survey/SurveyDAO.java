@@ -1,5 +1,6 @@
 package survey;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.hibernate.HibernateException;
@@ -116,6 +117,33 @@ public class SurveyDAO {
 			session.close(); 
 		}
 		return result;
+	}
+	
+	/**
+	 * Delete all surveys (and their questions and responses) where the survey deletion date is before now
+	 */
+	public static void cleanup_surveys(){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			@SuppressWarnings("rawtypes")
+			//get all survey id's that are to be deleted
+			Query query = session.createQuery("select id from SURVEYS where deleting >= :date");
+			query.setParameter("date", new Date(System.currentTimeMillis()));
+			@SuppressWarnings("unchecked")
+			ArrayList<Integer> survey_ids = new ArrayList<Integer>(query.getResultList());
+
+			//delete the surveys and their related objects
+			for(Integer id:survey_ids){
+				delete_survey(id);
+			}
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
 	}
 	
 	/**
