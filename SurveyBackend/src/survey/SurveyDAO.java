@@ -64,6 +64,25 @@ public class SurveyDAO {
 	}
 	
 	/**
+	 * Update any changes to a survey
+	 * @param survey
+	 */
+	public static void update_survey(Survey survey){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			session.update(survey); 
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+	}
+	
+	/**
 	 * Delete the given survey, and all corrisponding questions and responses
 	 * @param id the survey id
 	 * @return
