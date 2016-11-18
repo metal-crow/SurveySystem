@@ -7,6 +7,7 @@ import org.hibernate.cfg.Configuration;
 import question.Question;
 import question.QuestionDAO;
 import response.Response;
+import response.ResponseAPI;
 import response.ResponseDAO;
 import survey.Survey;
 import survey.SurveyAPI;
@@ -55,6 +56,9 @@ public class Source {
 		//start the APIs here, Spark will auto traverse them and start the endpoints
 		new UserAPI();
 		new SurveyAPI();
+		new ResponseAPI();
+		
+		//TODO start the thread which manages cleanup of surveys past deletion date
 	}
 	
 	/**
