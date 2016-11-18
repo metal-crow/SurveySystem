@@ -46,6 +46,11 @@ public class UserDAO {
 		assert user2.getemail().equals(email);
 		assert user2.getpassword_hash().equals(pass_hash);
 		assert user2.getlast_name().equals(last);
+		
+		user2.setfirst_name("newname");
+		update_user(user2);
+		user2 = get_user(user.getid());
+		assert user2.getfirst_name().equals("newname");
 
 		assert delete_user(user.getid());
 	}
@@ -70,6 +75,25 @@ public class UserDAO {
 		}
 		
 		return user;
+	}
+	
+	/**
+	 * Update any changes to a user
+	 * @param user
+	 */
+	public static void update_user(User user){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			session.update(user); 
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
 	}
 	
 	/**

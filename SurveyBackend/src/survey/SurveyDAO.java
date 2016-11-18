@@ -37,6 +37,11 @@ public class SurveyDAO {
 		assert got_informal_response(survey);
 		assert old_count==survey.getRespondant_id_count();
 		
+		survey.setSurvey_name("new_name");
+		update_survey(survey);
+		survey = get_survey(id);
+		assert survey.getSurvey_name().equals("new_name");
+
 		assert delete_survey(id);
 	}
 

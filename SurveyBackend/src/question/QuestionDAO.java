@@ -38,6 +38,10 @@ public class QuestionDAO {
 		assert get_question(question.getQuestion_id()).getQuestion_text().equals("test question");
 		assert get_questions(question.getQuestion_id()).get(0).getQuestion_text().equals("test question");
 		
+		question.setQuestion_text("new question");
+		update_question(question);
+		assert get_question(question.getQuestion_id()).getQuestion_text().equals("test question");
+
 		assert SurveyDAO.delete_survey(survey.getId());
 	}
 
@@ -64,6 +68,25 @@ public class QuestionDAO {
 			session.close(); 
 		}
 		return question;
+	}
+	
+	/**
+	 * Update any changes to a question
+	 * @param question
+	 */
+	public static void update_question(Question question){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			session.update(question); 
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
 	}
 	
 	/**

@@ -33,7 +33,7 @@ public class ResponseDAO {
 				new Date(System.currentTimeMillis()), 
 				-1);
 		Question question = QuestionDAO.create_question(survey, "test question", Response_Type.S_String);
-		create_response(123, survey, question, "this is an answer");
+		Response response = create_response(123, survey, question, "this is an answer");
 		ArrayList<Response> responses = get_responses(survey.getId());
 		
 		assert responses.size()==1;
@@ -43,6 +43,11 @@ public class ResponseDAO {
 		assert responses.get(0).getAnswer().equals("this is an answer");
 		assert has_responded(survey.getId(), 123)==true;
 		assert has_responded(survey.getId(), 999)==false;
+		
+		response.setAnswer("new answer");
+		update_response(response);
+		responses = get_responses(survey.getId());
+		assert responses.get(0).getAnswer().equals("new answer");
 		
 		assert SurveyDAO.delete_survey(survey.getId());
 	}
@@ -72,6 +77,25 @@ public class ResponseDAO {
 			session.close(); 
 		}
 		return response;
+	}
+	
+	/**
+	 * Update any changes to a response
+	 * @param response
+	 */
+	public static void update_response(Response response){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			session.update(response); 
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
 	}
 	
 	/**
