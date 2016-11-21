@@ -95,6 +95,10 @@ public class SurveyDAO {
 	 * @return
 	 */
 	public static boolean delete_survey(int id){
+		//delete all items that require the survye as a foreign key
+		ResponseDAO.delete_responses(id);
+		QuestionDAO.delete_questions(id);
+
 		Session session = factory.openSession();
 		Transaction tx = null;
 		boolean result = false;
@@ -105,11 +109,6 @@ public class SurveyDAO {
 			Query query = session.createQuery("delete SURVEYS where id = :id");
 			query.setParameter("id", id);
 			result = (query.executeUpdate()==1);
-			//delete responses
-			if(result){
-				ResponseDAO.delete_responses(id);
-				QuestionDAO.delete_questions(id);
-			}
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
