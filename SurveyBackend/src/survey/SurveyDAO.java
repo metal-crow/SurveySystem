@@ -44,6 +44,7 @@ public class SurveyDAO {
 		assert survey.getSurvey_name().equals("new_name");
 
 		assert delete_survey(id);
+		cleanup_surveys();
 	}
 
 	/**
@@ -121,6 +122,7 @@ public class SurveyDAO {
 	
 	/**
 	 * Delete all surveys (and their questions and responses) where the survey deletion date is before now
+	 * Only used with the cleanup thread
 	 */
 	public static void cleanup_surveys(){
 		Session session = factory.openSession();
@@ -129,7 +131,7 @@ public class SurveyDAO {
 			tx = session.beginTransaction();
 			@SuppressWarnings("rawtypes")
 			//get all survey id's that are to be deleted
-			Query query = session.createQuery("select id from SURVEYS where deleting >= :date");
+			Query query = session.createQuery("select id from SURVEYS where deleting <= :date");
 			query.setParameter("date", new Date(System.currentTimeMillis()));
 			@SuppressWarnings("unchecked")
 			ArrayList<Integer> survey_ids = new ArrayList<Integer>(query.getResultList());

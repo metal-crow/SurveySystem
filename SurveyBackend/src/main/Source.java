@@ -1,5 +1,8 @@
 package main;
+import java.util.Calendar;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -58,7 +61,22 @@ public class Source {
 		new SurveyAPI();
 		new ResponseAPI();
 		
-		//TODO start the thread which manages cleanup of surveys past deletion date
+		//set cleanup thread to be run at 9pm
+		Calendar cleanup_time = Calendar.getInstance();
+		cleanup_time.setTimeInMillis(System.currentTimeMillis());
+		cleanup_time.set(Calendar.HOUR_OF_DAY, 21);
+		cleanup_time.set(Calendar.MINUTE, 0);
+		//start the thread which manages cleanup of surveys past deletion date		
+		Timer cleanup_timer = new Timer();
+		cleanup_timer.schedule(
+			new TimerTask() {
+				public void run(){
+					SurveyDAO.cleanup_surveys();
+				}
+			},
+			cleanup_time.getTime(),
+			1000*60*60*24//wait for 24 hours
+		);
 	}
 	
 	/**
