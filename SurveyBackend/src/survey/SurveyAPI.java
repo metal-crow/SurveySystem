@@ -14,6 +14,7 @@ import com.google.gson.JsonParser;
 import question.Question;
 import question.Question.Response_Type;
 import question.QuestionDAO;
+import response.Response;
 import response.ResponseDAO;
 import survey.Survey.User_Response_Type;
 import user.UserDAO;
@@ -29,6 +30,11 @@ public class SurveyAPI {
 		String text;
 		int response_type;
 	}
+	//object to convert question from when received from client
+	class Question_JSON_wrapper_recieve_for_edit{
+		String question_text;
+		int question_id;
+	}
 	//object to convert Question to when sent from server
 	class Question_JSON_wrapper_send{
 		int id;
@@ -40,6 +46,17 @@ public class SurveyAPI {
 			this.text = text;
 			this.response_type = response_type;
 		}		
+	}
+	
+	//object to convert Response to when sent to arraylist
+	class Response_JSON_wrapper_send{
+		int respondant;
+		String answer;
+	}
+	//object to send to client
+	class Question_for_veiw_JSON_wrapper_send{
+		String text;
+		ArrayList<Response_JSON_wrapper_send> responses;
 	}
 	
 
@@ -144,6 +161,112 @@ public class SurveyAPI {
 			}
 		});
 		
-		//TODO allow managing user to edit survey
+		//allow managing user to edit survey
+		post("/survey/:survey_id/edit", "application/json", (request, response) -> {
+			try{
+				JsonObject survey_obj = new JsonParser().parse(request.body()).getAsJsonObject();
+
+				//verify user
+				int user_id = survey_obj.get("user_id").getAsInt();
+				String password = survey_obj.get("password").getAsString();
+				if(!UserDAO.verify_user(user_id, password)){
+					response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+					return -3;
+				}	
+				//Get Survey
+				Survey orig_survey = SurveyDAO.get_survey(Integer.valueOf(request.params("survey_id")));
+				if(orig_survey==null){
+					response.status(HttpURLConnection.HTTP_NOT_FOUND);
+					return -1;
+				}
+				if(orig_survey.getManaging_user_id()!=user_id){
+					response.status(HttpURLConnection.HTTP_NOT_FOUND);
+					return -1;
+				}
+
+				//edit survey object
+				orig_survey.setSurvey_name(survey_obj.get("survey_name").getAsString());
+				orig_survey.setUser_response_type(User_Response_Type.fromInt(survey_obj.get("user_response_type").getAsInt()));
+				DateFormat df = DateFormat.getDateInstance();
+				orig_survey.setClosing(df.parse(survey_obj.get("closing_date").getAsString()));
+				orig_survey.setDeleting(df.parse(survey_obj.get("deleting_date").getAsString()));
+
+				//verification of dates
+				if(orig_survey.getClosing().before(new Date(System.currentTimeMillis())) || orig_survey.getDeleting().before(new Date(System.currentTimeMillis())) || orig_survey.getClosing().after(orig_survey.getDeleting())){
+					response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+					return -2;
+				}
+
+				SurveyDAO.update_survey(orig_survey);
+				
+				//edit questions for survey
+				Question_JSON_wrapper_recieve_for_edit[] questions = new Gson().fromJson(survey_obj.get("questions"), Question_JSON_wrapper_recieve_for_edit[].class);
+				for(Question_JSON_wrapper_recieve_for_edit question:questions){
+					Question question_obj = QuestionDAO.get_question(question.question_id);
+					question_obj.setQuestion_text(question.question_text);
+					QuestionDAO.update_question(question_obj);
+				}
+				
+				response.status(HttpURLConnection.HTTP_ACCEPTED);
+				return 1;
+			}catch(Exception e){
+				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
+				return e.getMessage();
+			}
+		});
+		
+		//Get all responses for a survey
+		post("/survey/:survey_id/view", "application/json", (request, response) -> {
+			try{
+				JsonObject survey_obj = new JsonParser().parse(request.body()).getAsJsonObject();
+
+				//verify user
+				int user_id = survey_obj.get("user_id").getAsInt();
+				String password = survey_obj.get("password").getAsString();
+				if(!UserDAO.verify_user(user_id, password)){
+					response.status(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+					return -3;
+				}	
+				//Get Survey
+				Survey orig_survey = SurveyDAO.get_survey(Integer.valueOf(request.params("survey_id")));
+				if(orig_survey==null){
+					response.status(HttpURLConnection.HTTP_NOT_FOUND);
+					return -1;
+				}
+				if(orig_survey.getManaging_user_id()!=user_id){
+					response.status(HttpURLConnection.HTTP_NOT_FOUND);
+					return -1;
+				}
+				
+				JsonObject responses_json = new JsonObject();
+
+				ArrayList<Response> responses = ResponseDAO.get_responses(Integer.valueOf(request.params("survey_id")));
+				ArrayList<Question> questions = QuestionDAO.get_questions(Integer.valueOf(request.params("survey_id")));
+				
+				ArrayList<Question_for_veiw_JSON_wrapper_send> responses_json_array = new ArrayList<Question_for_veiw_JSON_wrapper_send>(questions.size());
+				for(Question q:questions){
+					Question_for_veiw_JSON_wrapper_send question_json = new Question_for_veiw_JSON_wrapper_send();
+					question_json.text=q.getQuestion_text();
+					for(Response r:responses){
+						if(r.getResponse_to().getQuestion_id()==q.getQuestion_id()){
+							Response_JSON_wrapper_send r_json = new Response_JSON_wrapper_send();
+							r_json.answer=r.getAnswer();
+							r_json.respondant=r.getRespondant();
+							question_json.responses.add(r_json);
+						}
+					}
+					responses_json_array.add(question_json);
+				}
+				
+				responses_json.addProperty("questions_and_responses",new Gson().toJson(responses_json_array));
+
+				response.status(HttpURLConnection.HTTP_OK);
+				return responses_json.toString();
+
+			}catch(Exception e){
+				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
+				return e.getMessage();
+			}
+		});
 	}
 }
