@@ -152,7 +152,6 @@ public class ResponseDAO {
 	/**
 	 * Get if user has already responded to this survey
 	 */
-	@SuppressWarnings("rawtypes")
 	public static boolean has_responded(int survey_id, int user_id) {
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -160,10 +159,11 @@ public class ResponseDAO {
 		try{
 			tx = session.beginTransaction();
 			
-			Query query = session.createQuery("select count(1) from RESPONSES where survey_id = :id and respondant = :user_id");
+			@SuppressWarnings("unchecked")
+			Query<Long> query = session.createQuery("select count(1) from RESPONSES where survey_id = :id and respondant = :user_id");
 	        query.setParameter("id", survey_id);
 	        query.setParameter("user_id", user_id);
-	        has_responded = query.uniqueResultOptional().equals(1);
+	        has_responded = query.uniqueResultOptional().get()==1;
 			
 			tx.commit();
 		}catch (HibernateException e) {

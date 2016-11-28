@@ -28,13 +28,13 @@ public class UserDAO {
 		assert user.getid()>-1;
 		
 		boolean result = verify_user(user.getid(), "!");
-		assert result:false;
+		assert result==false;
 		result = verify_user(user.getid(), pass_hash);
-		assert result:true;
+		assert result==true;
 		result = verify_user(user.getemail(), "!");
-		assert result:false;
+		assert result==false;
 		result = verify_user(user.getemail(), pass_hash);
-		assert result:true;
+		assert result==true;
 		
 		User user2 = get_user(user.getid());
 		assert user2.getfirst_name().equals(first);
@@ -132,10 +132,10 @@ public class UserDAO {
 			tx = session.beginTransaction();
 			
 			@SuppressWarnings("unchecked")
-			Query<Integer> query = session.createQuery("select count(1) from USERS where id = :id and password_hash = :password_hash");
+			Query<Long> query = session.createQuery("select count(1) from USERS where id = :id and password_hash = :password_hash");
 			query.setParameter("id", id);
 			query.setParameter("password_hash", password_hash);
-			password_match = (query.uniqueResultOptional().equals(1));
+			password_match = query.uniqueResultOptional().get()==1;
 			
 			tx.commit();
 		}catch (HibernateException e) {
@@ -159,10 +159,10 @@ public class UserDAO {
 			tx = session.beginTransaction();
 			
 			@SuppressWarnings("unchecked")
-			Query<Integer> query = session.createQuery("select count(1) from USERS where email = :email and password_hash = :password_hash");
+			Query<Long> query = session.createQuery("select count(1) from USERS where email = :email and password_hash = :password_hash");
 			query.setParameter("email", email);
 			query.setParameter("password_hash", password_hash);
-			password_match = (query.uniqueResultOptional().equals(1));
+			password_match = query.uniqueResultOptional().get()==1;
 			
 			tx.commit();
 		}catch (HibernateException e) {
