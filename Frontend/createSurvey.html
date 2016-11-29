@@ -12,19 +12,32 @@
 		<h1> Gold Creator </h1>
 	</div>
 	<div id="surveyintro">
-		<form action method="POST">
+		<form action="" method="POST">
 			<p>
-				<label for="survey_name"> survey_name </label>
+				<label for="survey_name"> Survey Name </label>
 				<input type="text" name="survey_name" id="survey_name">
 			</p>
 			<p>
-				<label for="closing_date"> closing_date </label>
+				<label for="closing_date"> Closing Date </label>
 				<input type="datetime" name="closing_date" id="closing_date">
 			</p>
 			<p>
-				<label for="delete_date"> delete_date </label>
-				<input type="datetime" name="delete_date" id="delete_date">
+				<label for="deleting_date"> Deletion Date </label>
+				<input type="datetime" name="deleting_date" id="deleting_date">
 			</p>
+			
+			<div id="question">
+				Question 1<br><input type="text" name="questions[]">
+			</div>
+			
+			<input type="button" value="Add another question" onClick="addQuestion('question');">
+			
+			<p id="newquestion"> </p>
+			
 		</form>
 	</div>
+	
+	<script src="javascript/addquestion.js"></script>
+	
 </body>
+</html>
