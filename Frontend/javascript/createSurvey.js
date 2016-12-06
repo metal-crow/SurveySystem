@@ -1,16 +1,15 @@
 $(document).ready(function() {
-	$('#createuser').click(function() {
+	$('#createSurvey').click(function() {
 		var em = $('#email').val();
 		var pass = $('#password').val();
-		var first = $('#firstname').val();
-		var last = $('#lastname').val();
+		
 		function setCookie(em, pass, exdays) {
 			var d = new Date();
 			d.setTime(d.getTime() + (exdays*24*60*60*1000));
 			var expires = "expires="+ d.toUTCString();
 			document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 		}
-function getCookie(cname) {
+		function getCookie(cname) {
 			var name = cname + "=";
 			var ca = document.cookie.split(';');
 			for(var i = 0; i < ca.length; i++) {
@@ -51,7 +50,7 @@ function getCookie(cname) {
 		$.ajax({
 			type: "POST",
 			url: "http://localhost:4567/createUser",
-			data: JSON.stringify({ "email": em, "first_name": first, "last_name": last, "password": hash}),
+			data: JSON.stringify({ "email": em, "password": hash}),
 			dataType: "json",
 			success: function() {
 				alert("true");
