@@ -40,7 +40,7 @@ public class UserAPI {
 				}
 				
 				response.status(HttpURLConnection.HTTP_CREATED);
-				return null;
+				return "";
 			}catch(Exception e){
 				response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
 				return e.getMessage();
