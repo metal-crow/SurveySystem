@@ -7,7 +7,7 @@
 		3.1.1/jquery.min.js">
 	</script>
 </head>
-<body>
+<body onload="checkCookie()">
 	<div id="wrapper">
 		<h1> Gold Creator </h1>
 		<div id="container">
@@ -18,17 +18,20 @@
 			</p>
 			<p>
 				<label for="closing_date"> closing_date </label>
-				<input type="datetime" name="closing_date" id="closing_date">
+				<input type="datetime-local" name="closing_date" id="closing_date">
 			</p>
-			<p>
+			<p> 
 				<label for="delete_date"> delete_date </label>
-				<input type="datetime" name="delete_date" id="delete_date">
+				<input type="datetime-local" name="delete_date" id="delete_date">
 			</p>
 			<p>
 				<label for="user_response_type"> user_response_type </label>
-				<input type="file" name="user_response_type" id="user_response_type">
+				<input type="text" name="user_response_type" id="user_response_type">
 			</p>
+				<input type="submit" value="Add Question">
+			
 		</form>
 		</div>
 	</div>
+	<script src="../javascipt/createSurvey.html"></script>
 </body>
